@@ -1,18 +1,18 @@
 import * as express from 'express';
-import LoginController from './controllers/loginController';
+import loginRoute from './routes/login.route';
+import teamsRoute from './routes/teams.route';
+import serverError from './middlewares/serverError';
 
 class App {
   public app: express.Express;
 
   constructor() {
-    const login = new LoginController();
     this.app = express();
 
     this.config();
 
     // Não remover essa rota
     this.app.get('/', (req, res) => res.json({ ok: true }));
-    this.app.post('/login', (req, res) => login.login(req, res));
   }
 
   private config():void {
@@ -25,6 +25,9 @@ class App {
 
     this.app.use(express.json());
     this.app.use(accessControl);
+    this.app.use('/login', loginRoute);
+    this.app.use('/teams', teamsRoute);
+    this.app.use(serverError.verify);
   }
 
   public start(PORT: string | number):void {
