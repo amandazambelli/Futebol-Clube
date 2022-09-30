@@ -22,7 +22,12 @@ const user = {
 describe('Testa a rota /login', () => {
   describe('POST', () => {
 
-    before(async () => sinon.stub(User, "findOne").resolves({id: 1, ...user} as User))
+    before(async () => {
+      sinon.stub(User, "findOne").resolves({id: 1, ...user} as User)
+    })
+    after(()=>{
+      (User.findOne as sinon.SinonStub).restore();
+    })
 
     it('Deve cadastrar um usuário com sucesso', async () => {
       const response = await chai.request(app).post('/login').send(user);
@@ -57,15 +62,4 @@ describe('Testa a rota /login', () => {
 
   //   expect(...)
   // });
-
-
-  /* it('Retorna status 200 e token de autentificação', () => {
-    chaiHttpResponse = await chai
-      .request(app)
-      .post('/login')
-      .send(userMock)
-
-    const token = tokenGenerate 
-    expect(false).to.be.eq(true);
-  }); */
 });

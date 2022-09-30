@@ -12,28 +12,33 @@ chai.use(chaiHttp);
 
 const teams = [
   {
-    "id": 1,
-    "teamName": "Avaí/Kindermann"
+    id: 1,
+    teamName: "Avaí/Kindermann"
   },
   {
-    "id": 2,
-    "teamName": "Bahia"
+    id: 2,
+    teamName: "Bahia"
   },
   {
-    "id": 3,
-    "teamName": "Botafogo"
+    id: 3,
+    teamName: "Botafogo"
   },
 ];
 
 const teamById = {
-  "id": 3,
-  "teamName": "Botafogo"
+  id: 3,
+  teamName: "Botafogo"
 };
 
 describe('Testa a rota /teams', () => {
   describe('GET' , () => {
 
-    before(async () => sinon.stub(Team, "findAll").resolves(teams as Team[]))
+    before(async () => {
+      sinon.stub(Team, "findAll").resolves(teams as Team[])
+    })
+    after(()=>{
+      (Team.findAll as sinon.SinonStub).restore();
+    })
 
     it('Deve retornar todos os times', async () => {
       const response = await chai.request(app).post('/teams');
@@ -46,7 +51,12 @@ describe('Testa a rota /teams', () => {
 
   describe('GET/id' , () => {
 
-    before(async () => sinon.stub(Team, "findByPk").resolves(teamById as Team))
+    before(async () => {
+      sinon.stub(Team, "findByPk").resolves(teamById as Team)
+    })
+    after(()=>{
+      (Team.findByPk as sinon.SinonStub).restore();
+    })
 
     it('Deve retornar o time em que o ID é passado', async () => {
       const response = await chai.request(app).post('/teams/3').send();
