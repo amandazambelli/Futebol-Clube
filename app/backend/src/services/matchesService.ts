@@ -44,8 +44,8 @@ class MatchesService {
     return result;
   };
 
-  public finish = async (id: number, inProgress: boolean) => {
-    const updateMatch = await MatchesModel.update({ inProgress }, { where: { id } });
+  public finish = async (id: number) => {
+    const updateMatch = await MatchesModel.update({ inProgress: false }, { where: { id } });
 
     return updateMatch;
   };
