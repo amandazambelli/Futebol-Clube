@@ -37,6 +37,14 @@ class MatchesController {
 
     res.status(200).json({ message: 'Finished' });
   };
+
+  public changeResults = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const matchesService = new MatchesService();
+    await matchesService.changeResults(Number(id), req.body);
+
+    res.status(200).json({ message: 'Goals updated!' });
+  };
 }
 
 export default MatchesController;

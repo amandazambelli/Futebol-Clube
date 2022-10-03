@@ -15,5 +15,6 @@ route.post(
   (req, res) => matchesController.saveMatch(req, res),
 );
 route.patch('/:id/finish', verifyToken, (req, res) => matchesController.finish(req, res));
+route.patch('/:id', verifyToken, (req, res) => matchesController.changeResults(req, res));
 
 export default route;

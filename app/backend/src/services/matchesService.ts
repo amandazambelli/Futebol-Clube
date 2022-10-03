@@ -1,6 +1,7 @@
 import MatchesModel from '../database/models/MatchesModel';
 import Team from '../database/models/TeamModel';
 import ISaveMatch from '../interfaces/iSaveMatch';
+import IGoals from '../interfaces/IGoals';
 
 class MatchesService {
   public getMatches = async () => {
@@ -47,6 +48,16 @@ class MatchesService {
     const updateMatch = await MatchesModel.update({ inProgress }, { where: { id } });
 
     return updateMatch;
+  };
+
+  public changeResults = async (id: number, goals: IGoals) => {
+    const { homeTeamGoals, awayTeamGoals } = goals;
+    const updateGoals = await MatchesModel.update(
+      { homeTeamGoals, awayTeamGoals },
+      { where: { id } },
+    );
+
+    return updateGoals;
   };
 }
 
