@@ -1,5 +1,6 @@
 import MatchesModel from '../database/models/MatchesModel';
 import Team from '../database/models/TeamModel';
+import ISaveMatch from '../interfaces/iSaveMatch';
 
 class MatchesService {
   public getMatches = async () => {
@@ -20,11 +21,33 @@ class MatchesService {
     return showMatches;
   };
 
-  /* public findById = async (id: number) => {
-    const showTeam = await TeamModel.findByPk(id);
+  public saveMatch = async (matchInfo: ISaveMatch) => {
+    const findIdHomeTeam = await Team.findByPk(matchInfo.homeTeam);
+    const findIdAwayTeam = await Team.findByPk(matchInfo.awayTeam);
 
-    return showTeam;
-  }; */
+    if (!findIdAwayTeam || !findIdHomeTeam) {
+      return undefined;
+    }
+
+    const matchData = await MatchesModel.create(matchInfo);
+
+    const result = {
+      id: matchData.id,
+      homeTeam: matchData.homeTeam,
+      homeTeamGoals: matchData.homeTeamGoals,
+      awayTeam: matchData.awayTeam,
+      awayTeamGoals: matchData.awayTeamGoals,
+      inProgress: matchData.inProgress,
+    };
+
+    return result;
+  };
+
+  public finish = async (id: number, inProgress: boolean) => {
+    const updateMatch = await MatchesModel.update({ inProgress }, { where: { id } });
+
+    return updateMatch;
+  };
 }
 
 export default MatchesService;

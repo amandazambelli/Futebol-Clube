@@ -1,14 +1,14 @@
-import { INTEGER, Model } from 'sequelize';
+import { INTEGER, BOOLEAN, Model } from 'sequelize';
 import db from '.';
 import Team from './TeamModel';
 
 class Matches extends Model {
-  private id!: number;
-  private homeTeam!: number;
-  private homeTeamGoals!: number;
-  private awayTeam!: number;
-  private awayTeamGoals!: number;
-  private inProgress!: number;
+  public id!: number;
+  public homeTeam!: number;
+  public homeTeamGoals!: number;
+  public awayTeam!: number;
+  public awayTeamGoals!: number;
+  public inProgress!: boolean;
 }
 
 Matches.init({
@@ -35,7 +35,7 @@ Matches.init({
     allowNull: false,
   },
   inProgress: {
-    type: INTEGER,
+    type: BOOLEAN,
     allowNull: false,
   },
 }, {
