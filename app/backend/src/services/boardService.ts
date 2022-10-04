@@ -2,22 +2,24 @@ import MatchesModel from '../database/models/MatchesModel';
 import Team from '../database/models/TeamModel';
 
 class BoardService {
-  public getLeaderBoard = async () => {
-    const showBoard = await MatchesModel.findAll({
+  public getHomeLeaderBoard = async () => {
+    const showBoard = await Team.findAll({
       include: [
         {
-          model: Team,
-          as: 'teamHome',
-          attributes: ['teamName'],
-        }, {
-          model: Team,
-          as: 'teamAway',
-          attributes: ['teamName'],
+          model: MatchesModel,
+          as: 'homeTeamMatches',
+          where: { inProgress: 0 },
         },
       ],
     });
 
     return showBoard;
+  };
+
+  public countMatches = async () => {
+    const showMatches = await MatchesModel.findAll({ where: { inProgress: false } });
+
+    return showMatches;
   };
 }
 
