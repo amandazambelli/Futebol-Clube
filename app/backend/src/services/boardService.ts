@@ -21,6 +21,20 @@ class BoardService {
 
     return showMatches;
   };
+
+  public getAwayLeaderBoard = async () => {
+    const showBoard = await Team.findAll({
+      include: [
+        {
+          model: MatchesModel,
+          as: 'awayTeamMatches',
+          where: { inProgress: 0 },
+        },
+      ],
+    });
+
+    return showBoard;
+  };
 }
 
 export default BoardService;

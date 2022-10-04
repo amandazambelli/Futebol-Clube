@@ -1,29 +1,29 @@
-import { IHomeTeamMatch } from '../interfaces/IHomeTeamMatch';
-import { IHomeMatch } from '../interfaces/IHomeMatch';
+import { IAwayTeamMatch } from '../interfaces/IHomeTeamMatch';
+import { IAwayMatch } from '../interfaces/IHomeMatch';
 import ILeaderResults from '../interfaces/ILeaderResults';
 
-const getGoals = (matches: IHomeTeamMatch[]) => {
-  const goalsFavor = matches.reduce((acc: number, curr: IHomeTeamMatch) =>
-    acc + curr.homeTeamGoals, 0);
-
-  const goalsOwn = matches.reduce((acc: number, curr: IHomeTeamMatch) =>
+const getGoals = (matches: IAwayTeamMatch[]) => {
+  const goalsFavor = matches.reduce((acc: number, curr: IAwayTeamMatch) =>
     acc + curr.awayTeamGoals, 0);
+
+  const goalsOwn = matches.reduce((acc: number, curr: IAwayTeamMatch) =>
+    acc + curr.homeTeamGoals, 0);
 
   const goalsBalance = goalsFavor - goalsOwn;
 
   return { goalsFavor, goalsOwn, goalsBalance };
 };
 
-const getMatchResults = (matches: IHomeTeamMatch[]) => {
+const getMatchResults = (matches: IAwayTeamMatch[]) => {
   let totalVictories = 0;
   let totalDraws = 0;
   let totalLosses = 0;
   let totalPoints = 0;
 
-  matches.forEach((match: IHomeTeamMatch) => {
-    if (match.homeTeamGoals > match.awayTeamGoals) {
+  matches.forEach((match: IAwayTeamMatch) => {
+    if (match.awayTeamGoals > match.homeTeamGoals) {
       totalVictories += 1; totalPoints += 3;
-    } else if (match.homeTeamGoals === match.awayTeamGoals) {
+    } else if (match.awayTeamGoals === match.homeTeamGoals) {
       totalDraws += 1; totalPoints += 1;
     } else {
       totalLosses += 1;
@@ -37,7 +37,7 @@ const getEfficiency = async (P: number, J: number) => {
   return efficiency;
 };
 
-const sortBoard = (board: ILeaderResults[]) => {
+const sortBoardAway = (board: ILeaderResults[]) => {
   const sortedLeaderboard = board.sort((a: ILeaderResults, b: ILeaderResults) => {
     if (a.totalPoints < b.totalPoints) return 1;
     if (a.totalPoints > b.totalPoints) return -1;
@@ -54,12 +54,12 @@ const sortBoard = (board: ILeaderResults[]) => {
   return sortedLeaderboard;
 };
 
-const returnBoard = (allMatches: IHomeMatch[]) => {
+const returnBoardAway = (allMatches: IAwayMatch[]) => {
   const matches = Promise.all(allMatches.map(async (match) => {
     const name = match.teamName;
-    const totalGames = match.homeTeamMatches.length;
-    const goals = getGoals(match.homeTeamMatches);
-    const total = getMatchResults(match.homeTeamMatches);
+    const totalGames = match.awayTeamMatches.length;
+    const goals = getGoals(match.awayTeamMatches);
+    const total = getMatchResults(match.awayTeamMatches);
     const efficiency = await (await (getEfficiency(total.totalPoints, totalGames))).toFixed(2);
 
     return {
@@ -76,4 +76,4 @@ const returnBoard = (allMatches: IHomeMatch[]) => {
   return matches;
 };
 
-export { getMatchResults, returnBoard, sortBoard };
+export { getMatchResults, returnBoardAway, sortBoardAway };

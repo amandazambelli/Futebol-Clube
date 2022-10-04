@@ -1,7 +1,15 @@
-import IHomeTeamMatch from './IHomeTeamMatch';
+import { IHomeTeamMatch, IAwayTeamMatch } from './IHomeTeamMatch';
 
-export default interface IHomeMatch {
+interface IHomeMatch {
   id?: number,
   teamName: string,
   homeTeamMatches: IHomeTeamMatch[]
 }
+
+interface IAwayMatch {
+  id?: number,
+  teamName: string,
+  awayTeamMatches: IAwayTeamMatch[]
+}
+
+export { IHomeMatch, IAwayMatch };
