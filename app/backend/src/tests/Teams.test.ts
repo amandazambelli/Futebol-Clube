@@ -41,7 +41,7 @@ describe('Testa a rota /teams', () => {
     })
 
     it('Deve retornar todos os times', async () => {
-      const response = await chai.request(app).post('/teams');
+      const response = await chai.request(app).get('/teams');
 
       expect(response.status).to.equal(200);
       expect(response.body).to.deep.equal(teams);
@@ -49,7 +49,7 @@ describe('Testa a rota /teams', () => {
 
   });
 
-  describe('GET/id' , () => {
+  describe('GET /teams/:id' , () => {
 
     before(async () => {
       sinon.stub(Team, "findByPk").resolves(teamById as Team)
@@ -59,7 +59,7 @@ describe('Testa a rota /teams', () => {
     })
 
     it('Deve retornar o time em que o ID é passado', async () => {
-      const response = await chai.request(app).post('/teams/3').send();
+      const response = await chai.request(app).get('/teams/3').send();
 
       expect(response.status).to.equal(200);
       expect(response.body).to.deep.equal(teamById);
