@@ -95,7 +95,7 @@ describe('Testa a rota /matches', () => {
   describe('GET /matches?inProgress=true' , () => {
 
     before(async () => {
-      sinon.stub(Matches, "findAll").resolves(matches as unknown as Matches[])
+      sinon.stub(Matches, "findAll").resolves(trueInProgress as unknown as Matches[])
     })
     after(()=>{
       (Matches.findAll as sinon.SinonStub).restore();

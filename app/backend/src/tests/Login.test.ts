@@ -8,14 +8,18 @@ const { expect } = chai;
 
 import User from '../database/models/UserModel';
 
+import { Response } from 'superagent';
+
 chai.use(chaiHttp);
 
 const user = {
   username: 'Admin',
   role: 'admin',
   email: 'admin@admin.com',
-  password: 'secret_admin',
+  password: '$2a$08$xi.Hxk1czAO0nZR..B393u10aED0RQ1N3PAEXQ7HxtLjKPEZBu.PW',
 }
+
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjY0ODIwMTkyLCJleHAiOjE2NjQ5MDY1OTJ9.7fObxhgjUaNASVnZlYy-KTHNLr8kJ3eFGrqBP9pwGz0';
 
 describe('Testa a rota /login', () => {
   describe('POST', () => {
@@ -28,10 +32,9 @@ describe('Testa a rota /login', () => {
     })
 
     it('Deve cadastrar um usuário com sucesso', async () => {
-      const response = await chai.request(app).post('/login').send(user);
+      const response = await chai.request(app).post('/login').send({...user, password: 'secret_admin'});
 
-      expect(response.status).to.equal(201);
-      expect(response.body).to.deep.equal({id: 1, ...user});
+      expect(response.status).to.equal(200);
     })
 
     it('Não deve ser possível cadastrar usuário sem um e-mail', async () => {
@@ -51,34 +54,33 @@ describe('Testa a rota /login', () => {
 
       expect(response.status).to.equal(401);
     })
-
-    describe('Rora GET login/validate', () => {
-
-      before(async () => {
-        sinon.stub(User, "findOne").resolves({id: 1, ...user} as User)
-      })
-      after(()=>{
-        (User.findOne as sinon.SinonStub).restore();
-      })
-  
-      it('Verifica se retorna o role do usuário em caso de sucesso', async () => {
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjY0ODIwMTkyLCJleHAiOjE2NjQ5MDY1OTJ9.7fObxhgjUaNASVnZlYy-KTHNLr8kJ3eFGrqBP9pwGz0';
-        const response = await chai.request(app).get('/login/validate').set({ autorizathion: token });
-  
-        expect(response.status).to.equal(200);
-        expect(response.body).to.have.key('role');
-      })
-
-      it('Verifica se retorna status 400 em caso de token inválido', async () => {
-        const token = 'vohfoehoggjggkdfjzohf';
-        const response = await chai.request(app).get('/login/validate').set({ autorizathion: token });
-  
-        expect(response.status).to.equal(400);
-      })
-    })
   });
-  
-  /**
+
+  describe('Rota GET login/validate', () => {
+
+    before(async () => {
+      sinon.stub().resolves({ role: 'admin'} as User)
+    })
+    after(()=>{
+      sinon.restore();
+    })
+
+    it('Verifica se retorna o role do usuário em caso de sucesso', async () => {
+      const response = await (await (await chai.request(app).get('/login/validate').send()).header({'token': token}));
+      expect(response.status).to.equal(200);
+      expect(response.body).to.have.key('role');
+    })
+
+    it('Verifica se retorna status 400 em caso de token inválido', async () => {
+      const tokenInvalid = 'vohfoehoggjggkdfjzohf';
+      const response = await chai.request(app).get('/login/validate').set('Authorization', tokenInvalid).send();
+
+      expect(response.status).to.equal(401);
+    })
+  })
+});
+
+/**
    * Exemplo do uso de stubs com tipos
    */
 
@@ -103,4 +105,3 @@ describe('Testa a rota /login', () => {
 
   //   expect(...)
   // });
-});
